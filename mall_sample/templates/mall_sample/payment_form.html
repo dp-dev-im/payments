@@ -1,0 +1,23 @@
+{%  extends 'mall_sample/base.html' %}
+
+{% block content %}
+    <h1>payments</h1>
+    <script src="https://cdn.iamport.kr/v1/iamport.js"></script>
+    <script>(function() {
+        const IMP = window.IMP;
+        const code = "imp83886631";
+        IMP.init(code);
+
+        const merchant_uid = "merchant_" + new Date().getTime();
+
+        IMP.request_pay({
+            merchant_uid: merchant_uid,
+            name: "test of payment",
+            amount: 100,
+        }, function(response) {
+            // TODO: callback function
+            console.log(response);
+        });
+    })();
+    </script>
+{% endblock %}
