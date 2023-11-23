@@ -1,19 +1,5 @@
-{% load bootstrap5 %}
+{% extends 'base.html' %}
 
-<!doctype html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Root</title>
-    {% bootstrap_css %}
-    {% bootstrap_javascript %}
-</head>
-<body>
-    <h1>Payments</h1>
-    <hr/>
-    &copy; :)
-</body>
-</html>
+{% block content %}
+    <button class="btn btn-primary">Root</button>
+{% endblock %}
