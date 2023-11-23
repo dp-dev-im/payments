@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>Pay</h2>
+
+    {{ payment_props|json_script:'payment-props' }}
+
+    <script>
+        window.PAYMENT_CHECK_URL =  {{ payment_check_url }}
+    </script>
+
+    <script src="https://cdn.iamport.kr/v1/iamport.js"></script>
+    <script>(function() {
+        const IMP = window.IMP;
+        const code = "iamport";
+        IMP.init(code);
+
+        const json_string = document.querySelector('#payment-props').textContent;
+        const props = JSON.parse(json_string)
+
+        IMP.request_pay(props, function(response) {
+            location.href = window.PAYMENT_CHECK_URL;
+        })
+    })();
+    </script>
+{% endblock %}
