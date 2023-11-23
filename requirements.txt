@@ -1,5 +1,6 @@
 django
 django-environ
+django-bootstrap-v5
 
 django-debug-toolbar
 
