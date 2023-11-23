@@ -1,3 +1,6 @@
 django
-black
+django-environ
+
 django-debug-toolbar
+
+black
