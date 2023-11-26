@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     "bootstrap5",
     # Local apps
     "accounts",
+    "mall",
     "mall_sample",
 ]
 
