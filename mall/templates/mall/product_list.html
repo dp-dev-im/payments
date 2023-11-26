@@ -1,0 +1,29 @@
+{% extends 'mall/base.html' %}
+{% load humanize %}
+
+{% block content %}
+    <h2>Product list</h2>
+
+{#    {{ product_list }}#}
+    <div class="row">
+        {% for product in product_list %}
+            <div class="col-sm-6 col-lg-4">
+                <div class="card">
+                    <img src="{{ product.photo.url }}" alt="{{ product.name }}" class="card-img-top object-fit-cover"/>
+                    <div class="card-body">
+                        {{ product.category.name }}
+                        <div>
+                            <h5 class="text-truncate">{{ product.name }}</h5>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <div>{{ product.price|intcomma }}원</div>
+                            <div>
+                                <a href="#" class="btn btn-primary">Cart</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
