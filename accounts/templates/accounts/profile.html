@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% load bootstrap5 %}
+
+
+{% block content %}
+    <h2>{{ user }} Profile</h2>
+    <ul>
+        <li>username {{ user.username }}</li>
+        <li>name: {{ user.first_name }}</li>
+    </ul>
+{% endblock %}
