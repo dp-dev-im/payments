@@ -3,9 +3,11 @@
 {% block content %}
     <h2>payment_detail</h2>
 
-    {{ payment.merchant_uid }}
-    {{ payment.name }}
-    {{ payment.amount }}
-    {{ payment.status }}
-    {{ payment.is_paid_ok }}
+    <ul>
+        <li> merchant_uid: {{ payment.merchant_uid }}</li>
+        <li>{{ payment.name }} </li>
+        <li>{{ payment.amount }} </li>
+        <li>{{ payment.status }}</li>
+        <li>{{ payment.is_paid_ok }}</li>
+    </ul>
 {% endblock %}
