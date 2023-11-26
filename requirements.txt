@@ -5,6 +5,7 @@ iamport-rest-client
 Pillow
 requests
 tqdm
+sorl-thumbnail
 
 django-debug-toolbar
 

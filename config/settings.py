@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     # Third apps
     "debug_toolbar",
     "bootstrap5",
+    "sorl.thumbnail",
     # Local apps
     "accounts",
     "mall",

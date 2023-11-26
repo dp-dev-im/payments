@@ -1,5 +1,6 @@
 {% extends 'mall/base.html' %}
 {% load humanize %}
+{% load thumbnail %}
 
 {% block content %}
     <h2>Product list</h2>
@@ -9,7 +10,10 @@
         {% for product in product_list %}
             <div class="col-sm-6 col-lg-4">
                 <div class="card">
-                    <img src="{{ product.photo.url }}" alt="{{ product.name }}" class="card-img-top object-fit-cover"/>
+                    {% thumbnail product.photo "250x250" crop='center' as thumb %}
+                        <img src="{{ thumb.url }}" alt="{{ product.name }}" class="card-img-top object-fit-cover"/>
+                    {% endthumbnail %}
+
                     <div class="card-body">
                         {{ product.category.name }}
                         <div>
