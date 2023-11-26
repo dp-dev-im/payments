@@ -1,6 +1,7 @@
 {% extends 'mall/base.html' %}
 {% load humanize %}
 {% load thumbnail %}
+{% load bootstrap5 %}
 
 {% block content %}
     <h2>Product list</h2>
@@ -8,7 +9,7 @@
 {#    {{ product_list }}#}
     <div class="row">
         {% for product in product_list %}
-            <div class="col-sm-6 col-lg-4">
+            <div class="col-sm-6 col-lg-4 mb-3">
                 <div class="card">
                     {% thumbnail product.photo "250x250" crop='center' as thumb %}
                         <img src="{{ thumb.url }}" alt="{{ product.name }}" class="card-img-top object-fit-cover"/>
@@ -29,5 +30,9 @@
                 </div>
             </div>
         {% endfor %}
+    </div>
+
+    <div class="mt-3 mb-3">
+        {% bootstrap_pagination page_obj %}
     </div>
 {% endblock %}

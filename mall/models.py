@@ -44,3 +44,4 @@ class Product(models.Model):
 
     class Meta:
         verbose_name = verbose_name_plural = "product"
+        ordering = ["-pk"]
