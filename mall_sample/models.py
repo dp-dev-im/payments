@@ -42,6 +42,8 @@ class Payment(models.Model):
         api = Iamport(
             imp_key=settings.PORTONE_API_KEY, imp_secret=settings.PORTONE_API_SECRET
         )
+
+        print(api)
         try:
             meta = api.find(merchant_uid=self.merchant_uid)
         except (Iamport.ResponseError, Iamport.HttpError) as e:
