@@ -7,7 +7,7 @@ from django.views.decorators.http import require_POST
 from django.views.generic import ListView
 
 from mall.forms import CartProductForm
-from mall.models import Product, CartProduct
+from mall.models import Product, CartProduct, Order
 
 
 # Create your views here.
@@ -91,5 +91,28 @@ def cart_detail(request):
         "mall/cart_detail.html",
         {
             "formset": formset,
+        },
+    )
+
+
+@login_required()
+def order_new(request):
+    cart_product_qs = CartProduct.objects.filter(user=request.user)
+
+    order = Order.create_form_cart(request.user, cart_product_qs)
+    cart_product_qs.delete()
+
+    return redirect("order_pay", order.pk)
+
+
+@login_required()
+def order_pay(request, pk):
+    order = get_object_or_404(Order, pk=pk, user=request.user)
+
+    return render(
+        request,
+        "mall/order_pay.html",
+        {
+            "order": order,
         },
     )

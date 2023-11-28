@@ -2,7 +2,7 @@ from uuid import uuid4
 
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.db.models import UniqueConstraint
+from django.db.models import UniqueConstraint, QuerySet
 
 from accounts.models import User
 
@@ -72,6 +72,10 @@ class CartProduct(models.Model):
     def __str__(self):
         return f"<{self.pk}> {self.product.name}: {self.quantity}"
 
+    @property
+    def amount(self) -> int:
+        return self.product.price * self.quantity
+
     class Meta:
         verbose_name = verbose_name_plural = "cart product"
         constraints = [
@@ -110,6 +114,33 @@ class Order(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    @classmethod
+    def create_form_cart(
+        cls, user: User, cart_product_qs: QuerySet[CartProduct]
+    ) -> "Order":
+        # 캐싱
+        cart_product_list = list(cart_product_qs)
+
+        total_amount = sum(cart_product.amount for cart_product in cart_product_list)
+        print(total_amount)
+
+        order = cls.objects.create(user=user, total_amount=total_amount)
+
+        order_product_list = []
+        for cart_product in cart_product_list:
+            product = cart_product.product
+            ordered_product = OrderedProduct(
+                order=order,
+                product=product,
+                name=product.name,
+                price=product.price,
+                quantity=cart_product.quantity,
+            )
+            order_product_list.append(ordered_product)
+        OrderedProduct.objects.bulk_create(order_product_list)
+
+        return order
 
 
 class OrderedProduct(models.Model):
