@@ -21,7 +21,7 @@
         <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
           <li><a href="{% url 'root' %}" class="nav-link px-2 text-secondary">Home</a></li>
           <li><a href="{% url 'product_list' %}" class="nav-link px-2 text-black">Mall</a></li>
-          <li><a href="#" class="nav-link px-2 text-black">Pricing</a></li>
+          <li><a href="{% url 'cart_detail' %}" class="nav-link px-2 text-black">Cart</a></li>
           <li><a href="#" class="nav-link px-2 text-black">FAQs</a></li>
           <li><a href="#" class="nav-link px-2 text-black">About</a></li>
         </ul>
@@ -41,12 +41,14 @@
   </header>
 
     <div class="container">
+        {% bootstrap_messages %}
         {% block content %}
         {% endblock %}
-
         <hr/>
         &copy; :)
     </div>
 
+    {% block extra-script %}
+    {% endblock %}
 </body>
 </html>

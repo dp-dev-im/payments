@@ -6,6 +6,7 @@ Pillow
 requests
 tqdm
 sorl-thumbnail
+django-widget-tweaks
 
 django-debug-toolbar
 

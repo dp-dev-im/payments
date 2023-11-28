@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     "debug_toolbar",
     "bootstrap5",
     "sorl.thumbnail",
+    "widget_tweaks",
     # Local apps
     "accounts",
     "mall",

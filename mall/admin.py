@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category, Product
+from .models import Category, Product, CartProduct
 
 
 @admin.register(Category)
@@ -23,3 +23,9 @@ class ProductAdmin(admin.ModelAdmin):
         self.message_user(
             request, f"{count}개의 상품을 {Product.Status.ACTIVE.label} 상태로 변경 완료"
         )
+
+
+@admin.register(CartProduct)
+class CartProductAdmin(admin.ModelAdmin):
+    list_display = ["user", "product", "quantity"]
+    list_display_links = ["product"]
