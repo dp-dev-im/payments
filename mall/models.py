@@ -7,6 +7,7 @@ from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import UniqueConstraint, QuerySet
 from django.http import Http404
+from django.urls import reverse
 from iamport import Iamport
 
 from accounts.models import User
@@ -123,6 +124,25 @@ class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def get_absolute_url(self):
+        return reverse("order_detail", args=[self.pk])
+
+    def can_pay(self) -> bool:
+        return self.status in (
+            self.StatusChoices.REQUESTED,
+            self.StatusChoices.FAILED_PAYMENT,
+        )
+
+    @property
+    def name(self):
+        first_product = self.orderedproduct_set.first()
+        if first_product is None:
+            return "등록된 상품이 없습니다."
+        size = self.orderedproduct_set.all().count()
+        if size < 2:
+            return first_product.name
+        return f"{first_product.name} 외 {size -1}건"
+
     @classmethod
     def create_form_cart(
         cls, user: User, cart_product_qs: QuerySet[CartProduct]
@@ -131,7 +151,7 @@ class Order(models.Model):
         cart_product_list = list(cart_product_qs)
 
         total_amount = sum(cart_product.amount for cart_product in cart_product_list)
-        print(total_amount)
+        # print(total_amount)
 
         order = cls.objects.create(user=user, total_amount=total_amount)
 
@@ -187,6 +207,7 @@ class AbstractPortonePayment(models.Model):
 
     meta = models.JSONField("포트원 결제내역", default=dict, editable=False)
     uid = models.UUIDField("결제식별자", default=uuid4, editable=False)
+    name = models.CharField("결제명", max_length=150)
     desired_amount = models.PositiveIntegerField("결제금액", editable=False)
     buyer_name = models.CharField("구매자 이름", max_length=50, editable=False)
     buyer_email = models.EmailField("구매지 이메일", editable=False)
@@ -215,9 +236,13 @@ class AbstractPortonePayment(models.Model):
             imp_key=settings.PORTONE_API_KEY, imp_secret=settings.PORTONE_API_SECRET
         )
 
+    @property
+    def merchant_uid(self):
+        return str(self.uid)
+
     def update(self):
         try:
-            self.meta = self.api.find(merchant_uid=self.uid)
+            self.meta = self.api.find(merchant_uid=self.merchant_uid)
         except (Iamport.ResponseError, Iamport.HttpError) as e:
             logger.error(str(e), exc_info=e)
             raise Http404("포트원에서 결제내역을 찾을 수 없음")
@@ -233,3 +258,25 @@ class AbstractPortonePayment(models.Model):
 
 class OrderPayment(AbstractPortonePayment):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, db_constraint=False)
+
+    def update(self):
+        super().update()
+
+        if self.is_paid_ok:
+            self.order.status = Order.StatusChoices.PAID
+            self.order.save()
+            self.order.orderpayment_set.exclude(pk=self.pk).delete()
+
+        elif self.pay_status in (self.PayStatus.CANCELLED, self.PayStatus.FAILED):
+            self.order.status = Order.StatusChoices.FAILED_PAYMENT
+            self.order.save()
+
+    @classmethod
+    def create_by_order(cls, order: Order) -> "OrderPayment":
+        return cls.objects.create(
+            order=order,
+            name=order.name,
+            desired_amount=order.total_amount,
+            buyer_name=order.user.get_full_name(),
+            buyer_email=order.user.email,
+        )
